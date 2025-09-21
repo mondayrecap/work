@@ -193,7 +193,7 @@
       uploadBtn.disabled = true;
       btnContent.innerHTML = '<span class="spinner"></span> Uploading...';
 
-      const message = `📌 *Recap daily*\n\n👤 *Nama:* ${escapeMarkdown(name)}\n🎞️ *EPS:* ${escapeMarkdown(episode)}\n📑 *Judul:* ${escapeMarkdown(title)}\n📖 *Deskripsi:* ${escapeMarkdown(desc)}`;
+      const message = `*Recap daily*\n\n👤 *Nama:* ${escapeMarkdown(name)}\n🎞️ *EPS:* ${escapeMarkdown(episode)}\n📑 *Judul:* ${escapeMarkdown(title)}\n📖 *Deskripsi:* ${escapeMarkdown(desc)}`;
 
       try {
         const res = await fetch(TG_SEND_URL, {
