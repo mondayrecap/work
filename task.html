@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Proyek Telegram</title>
+  <style>
+    body {
+      font-family: "SF Pro Display", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(-45deg, #000, #444, #888, #ccc);
+      background-size: 400% 400%;
+      animation: gradientMove 8s ease infinite;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(16px);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      color: white;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 26px;
+      letter-spacing: 1px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      margin-top: 6px;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      transition: 0.3s;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      background: rgba(255,255,255,0.25);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: none;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(135deg, #111, #333);
+      color: white;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #222, #555);
+      transform: scale(1.03);
+    }
+
+    #status {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    #status.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📌 Project Management</h1>
+
+    <form id="taskForm">
+      <label>Nama</label>
+      <select id="taskName" required>
+        <option value="">-- Pilih Nama --</option>
+        <option>Ageng</option>
+        <option>Citra</option>
+        <option>Rifat</option>
+      </select>
+
+      <label>EPS</label>
+      <input type="text" id="taskTitle" required placeholder="Masukkan nomor EPS">
+
+      <label>Deskripsi</label>
+      <textarea id="taskDesc" required placeholder="Tulis detail tugas di sini..."></textarea>
+
+      <button type="submit">⬆ Upload</button>
+    </form>
+
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const TOKEN = "8356256936:AAHe97i0u9wgNcjDwfl5pEqavxJUjVoNt6Y";
+    const CHAT_ID = "5812228798";
+    const URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+
+    document.getElementById("taskForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      let name = document.getElementById("taskName").value;
+      let title = document.getElementById("taskTitle").value;
+      let desc = document.getElementById("taskDesc").value;
+
+      let message = `📌 *Task Baru Ditambahkan*\n\n👤 *Nama:* ${name}\n📝 *EPS:* ${title}\n📖 *Deskripsi:* ${desc}`;
+
+      fetch(URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message,
+          parse_mode: "Markdown"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        let statusEl = document.getElementById("status");
+        if(data.ok) {
+          statusEl.innerHTML = "✅ Task berhasil dikirim ke Telegram!";
+          document.getElementById("taskForm").reset();
+        } else {
+          statusEl.innerHTML = "❌ Gagal mengirim pesan.";
+        }
+        statusEl.classList.add("show");
+      })
+      .catch(err => {
+        let statusEl = document.getElementById("status");
+        statusEl.innerHTML = "⚠️ Error: " + err;
+        statusEl.classList.add("show");
+      });
+    });
+  </script>
+</body>
+</html>
