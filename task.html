@@ -124,7 +124,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>📌 Project Management</h1>
+    <h1>Work Recap</h1>
 
     <form id="taskForm" autocomplete="off">
       <label for="taskName">Nama</label>
@@ -193,7 +193,7 @@
       uploadBtn.disabled = true;
       btnContent.innerHTML = '<span class="spinner"></span> Uploading...';
 
-      const message = `📌 *Task Baru Ditambahkan*\n\n👤 *Nama:* ${escapeMarkdown(name)}\n🎞️ *EPS:* ${escapeMarkdown(episode)}\n📑 *Judul:* ${escapeMarkdown(title)}\n📖 *Deskripsi:* ${escapeMarkdown(desc)}`;
+      const message = `📌 *Recap daily*\n\n👤 *Nama:* ${escapeMarkdown(name)}\n🎞️ *EPS:* ${escapeMarkdown(episode)}\n📑 *Judul:* ${escapeMarkdown(title)}\n📖 *Deskripsi:* ${escapeMarkdown(desc)}`;
 
       try {
         const res = await fetch(TG_SEND_URL, {
