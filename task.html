@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Manajemen Proyek Telegram</title>
   <style>
-    /* Basic animated monochrome background */
     body {
       font-family: "SF Pro Display", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       margin: 0;
@@ -25,7 +24,6 @@
       100% {background-position: 0% 50%;}
     }
 
-    /* Card */
     .container {
       width: 100%;
       max-width: 560px;
@@ -41,7 +39,6 @@
       margin: 0 0 14px 0;
       font-size: 22px;
       text-align: center;
-      letter-spacing: 0.4px;
     }
 
     label {
@@ -53,43 +50,28 @@
       color: rgba(255,255,255,0.9);
     }
 
-    /* Inputs: white background + black text as requested */
     select, input[type="text"], textarea {
       width:100%;
       padding:12px 14px;
       border-radius: 12px;
       border: 1px solid rgba(0,0,0,0.06);
       background: #ffffff;
-      color: #000000; /* teks warna hitam */
+      color: #000000;
       font-size: 15px;
       outline: none;
       box-sizing: border-box;
       transition: transform .12s ease, box-shadow .12s ease;
     }
-
-    select:focus, input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       transform: translateY(-2px);
       box-shadow: 0 6px 18px rgba(0,0,0,0.18);
     }
-
-    /* Make select options visible in dropdown */
-    option { color: #000; background: #fff; }
 
     textarea {
       min-height: 100px;
       resize: vertical;
     }
 
-    .row {
-      display: flex;
-      gap: 10px;
-    }
-
-    .small {
-      flex: 1;
-    }
-
-    /* Upload button */
     button.upload {
       margin-top: 18px;
       width: 100%;
@@ -108,9 +90,8 @@
       gap: 10px;
     }
     button.upload:active { transform: scale(.997); }
-    button.upload[disabled] { opacity: .6; cursor: not-allowed; transform: none; }
+    button.upload[disabled] { opacity: .6; cursor: not-allowed; }
 
-    /* status */
     #status {
       margin-top: 14px;
       text-align: center;
@@ -122,7 +103,6 @@
     }
     #status.show { opacity: 1; transform: translateY(0); }
 
-    /* Task history list */
     #history { margin-top:16px; list-style:none; padding:0; max-height:220px; overflow:auto; }
     #history li {
       background: rgba(255,255,255,0.9);
@@ -134,22 +114,16 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.06);
     }
 
-    /* small spinner */
     .spinner {
       width:16px; height:16px; border-radius:50%;
       border:2px solid rgba(0,0,0,0.12);
       border-top-color: rgba(0,0,0,0.6); animation: spin .8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* responsive */
-    @media (max-width:520px) {
-      .container { padding:18px; border-radius:14px; }
-    }
   </style>
 </head>
 <body>
-  <div class="container" role="main">
+  <div class="container">
     <h1>📌 Project Management</h1>
 
     <form id="taskForm" autocomplete="off">
@@ -161,113 +135,13 @@
         <option value="Rifat">Rifat</option>
       </select>
 
-      <label for="taskEpisode">Episode (Title)</label>
-      <select id="taskEpisode" required>
-        <option value="">-- Pilih Episode --</option>
-        <!-- options 1..24 -->
-        <script>
-          // This script block will be executed when HTML parsed: fill episode options
-          for (let i = 1; i <= 24; i++) {
-            document.write(`<option value="Episode ${i}">Episode ${i}</option>`);
-          }
-        </script>
-      </select>
+      <label for="taskEpisode">EPS</label>
+      <input type="text" id="taskEpisode" placeholder="Contoh: EPS 12" required />
+
+      <label for="taskTitle">Judul</label>
+      <input type="text" id="taskTitle" placeholder="Masukkan judul..." required />
 
       <label for="taskDesc">Deskripsi</label>
       <textarea id="taskDesc" placeholder="Tulis detail tugas di sini..." required></textarea>
 
-      <button class="upload" id="uploadBtn" type="submit">
-        <span id="btnContent">⬆ Upload</span>
-      </button>
-    </form>
-
-    <div id="status" aria-live="polite"></div>
-
-    <ul id="history" aria-label="Riwayat tugas"></ul>
-  </div>
-
-  <script>
-    // === CONFIG ===
-    const TOKEN = "8356256936:AAHe97i0u9wgNcjDwfl5pEqavxJUjVoNt6Y";
-    const CHAT_ID = "5812228798";
-    const TG_SEND_URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-
-    // === HELPERS ===
-    const el = id => document.getElementById(id);
-    const statusEl = el('status');
-    const historyEl = el('history');
-    const uploadBtn = el('uploadBtn');
-    const btnContent = el('btnContent');
-
-    function showStatus(text, ok = true) {
-      statusEl.textContent = text;
-      statusEl.style.color = ok ? '#c8ffd9' : '#ffd0d0';
-      statusEl.classList.add('show');
-      setTimeout(()=> statusEl.classList.remove('show'), 6000);
-    }
-
-    // append local history (ke UI saja)
-    function addHistoryItem(obj) {
-      const li = document.createElement('li');
-      li.innerHTML = `<strong>${obj.name}</strong> • <em>${obj.episode}</em><br>${obj.desc}`;
-      historyEl.insertBefore(li, historyEl.firstChild);
-    }
-
-    // Handle form submit
-    document.getElementById('taskForm').addEventListener('submit', async function(evt) {
-      evt.preventDefault();
-
-      const name = el('taskName').value.trim();
-      const episode = el('taskEpisode').value.trim();
-      const desc = el('taskDesc').value.trim();
-
-      if (!name || !episode || !desc) {
-        showStatus('Lengkapi semua field dulu.', false);
-        return;
-      }
-
-      // disable UI while uploading
-      uploadBtn.disabled = true;
-      btnContent.innerHTML = '<span class="spinner" aria-hidden="true"></span> Uploading...';
-
-      // build message (Markdown)
-      const message = `📌 *Task Baru Ditambahkan*\n\n👤 *Nama:* ${escapeMarkdown(name)}\n🎞️ *Episode:* ${escapeMarkdown(episode)}\n📖 *Deskripsi:* ${escapeMarkdown(desc)}`;
-
-      // send to telegram
-      try {
-        const res = await fetch(TG_SEND_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
-        });
-
-        const data = await res.json();
-
-        if (data && data.ok) {
-          showStatus('✅ Task berhasil dikirim ke Telegram!', true);
-          // add to local history
-          addHistoryItem({ name, episode, desc });
-          // reset form
-          document.getElementById('taskForm').reset();
-        } else {
-          // show Telegram error message if any
-          const errText = data && data.description ? data.description : 'Gagal mengirim pesan.';
-          showStatus('❌ ' + errText, false);
-          console.error('Telegram error:', data);
-        }
-      } catch (err) {
-        showStatus('⚠️ Terjadi error: ' + err.message, false);
-        console.error(err);
-      } finally {
-        uploadBtn.disabled = false;
-        btnContent.innerHTML = '⬆ Upload';
-      }
-    });
-
-    // small helper to escape Markdown-sensitive chars (basic)
-    function escapeMarkdown(text) {
-      return String(text).replace(/([_*[\]()~`>#+\-=|{}.!])/g, '\\$1');
-    }
-  </script>
-</body>
-</html>
+      <button class="upload" id="uploadBtn" typ
