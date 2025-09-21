@@ -1,180 +1,273 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Manajemen Proyek Telegram</title>
   <style>
+    /* Basic animated monochrome background */
     body {
-      font-family: "SF Pro Display", Arial, sans-serif;
+      font-family: "SF Pro Display", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       margin: 0;
-      padding: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(-45deg, #000, #444, #888, #ccc);
+      background: linear-gradient(-45deg, #0b0b0b, #2a2a2a, #5a5a5a, #bfbfbf);
       background-size: 400% 400%;
-      animation: gradientMove 8s ease infinite;
+      animation: gradientMove 10s ease infinite;
+      color: #fff;
+      padding: 24px;
     }
-
     @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
     }
 
+    /* Card */
     .container {
       width: 100%;
-      max-width: 500px;
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(16px);
-      padding: 25px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      color: white;
-      animation: fadeIn 1.2s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      max-width: 560px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.04);
     }
 
     h1 {
+      margin: 0 0 14px 0;
+      font-size: 22px;
       text-align: center;
-      margin-bottom: 20px;
-      font-size: 26px;
-      letter-spacing: 1px;
+      letter-spacing: 0.4px;
     }
 
     label {
-      display: block;
-      margin-top: 15px;
-      font-weight: 600;
-      font-size: 14px;
+      display:block;
+      margin-top: 12px;
+      margin-bottom:6px;
+      font-weight:600;
+      font-size:13px;
+      color: rgba(255,255,255,0.9);
     }
 
-    select, input, textarea {
-      width: 100%;
-      margin-top: 6px;
-      padding: 12px;
-      border: none;
+    /* Inputs: white background + black text as requested */
+    select, input[type="text"], textarea {
+      width:100%;
+      padding:12px 14px;
       border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.06);
+      background: #ffffff;
+      color: #000000; /* teks warna hitam */
       font-size: 15px;
       outline: none;
-      background: rgba(255,255,255,0.15);
-      color: white;
-      transition: 0.3s;
+      box-sizing: border-box;
+      transition: transform .12s ease, box-shadow .12s ease;
     }
 
     select:focus, input:focus, textarea:focus {
-      background: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
     }
+
+    /* Make select options visible in dropdown */
+    option { color: #000; background: #fff; }
 
     textarea {
-      min-height: 90px;
-      resize: none;
+      min-height: 100px;
+      resize: vertical;
     }
 
-    button {
-      margin-top: 25px;
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .small {
+      flex: 1;
+    }
+
+    /* Upload button */
+    button.upload {
+      margin-top: 18px;
       width: 100%;
-      padding: 14px;
+      padding: 12px 16px;
+      border-radius: 12px;
       border: none;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: bold;
       cursor: pointer;
-      background: linear-gradient(135deg, #111, #333);
-      color: white;
-      transition: transform 0.2s, background 0.3s;
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(235,235,235,0.95));
+      color: #111;
+      font-weight: 700;
+      font-size: 15px;
+      transition: transform .12s ease, opacity .12s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
+    button.upload:active { transform: scale(.997); }
+    button.upload[disabled] { opacity: .6; cursor: not-allowed; transform: none; }
 
-    button:hover {
-      background: linear-gradient(135deg, #222, #555);
-      transform: scale(1.03);
-    }
-
+    /* status */
     #status {
-      margin-top: 20px;
+      margin-top: 14px;
       text-align: center;
+      font-weight: 600;
       font-size: 14px;
-      font-weight: bold;
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      transform: translateY(6px);
+    }
+    #status.show { opacity: 1; transform: translateY(0); }
+
+    /* Task history list */
+    #history { margin-top:16px; list-style:none; padding:0; max-height:220px; overflow:auto; }
+    #history li {
+      background: rgba(255,255,255,0.9);
+      color: #000;
+      padding:10px 12px;
+      margin-bottom:8px;
+      border-radius:10px;
+      font-size:13px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
     }
 
-    #status.show {
-      opacity: 1;
+    /* small spinner */
+    .spinner {
+      width:16px; height:16px; border-radius:50%;
+      border:2px solid rgba(0,0,0,0.12);
+      border-top-color: rgba(0,0,0,0.6); animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* responsive */
+    @media (max-width:520px) {
+      .container { padding:18px; border-radius:14px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" role="main">
     <h1>📌 Project Management</h1>
 
-    <form id="taskForm">
-      <label>Nama</label>
+    <form id="taskForm" autocomplete="off">
+      <label for="taskName">Nama</label>
       <select id="taskName" required>
         <option value="">-- Pilih Nama --</option>
-        <option>Ageng</option>
-        <option>Citra</option>
-        <option>Rifat</option>
+        <option value="Ageng">Ageng</option>
+        <option value="Citra">Citra</option>
+        <option value="Rifat">Rifat</option>
       </select>
 
-      <label>EPS</label>
-      <input type="text" id="taskTitle" required placeholder="Masukkan nomor EPS">
+      <label for="taskEpisode">Episode (Title)</label>
+      <select id="taskEpisode" required>
+        <option value="">-- Pilih Episode --</option>
+        <!-- options 1..24 -->
+        <script>
+          // This script block will be executed when HTML parsed: fill episode options
+          for (let i = 1; i <= 24; i++) {
+            document.write(`<option value="Episode ${i}">Episode ${i}</option>`);
+          }
+        </script>
+      </select>
 
-      <label>Deskripsi</label>
-      <textarea id="taskDesc" required placeholder="Tulis detail tugas di sini..."></textarea>
+      <label for="taskDesc">Deskripsi</label>
+      <textarea id="taskDesc" placeholder="Tulis detail tugas di sini..." required></textarea>
 
-      <button type="submit">⬆ Upload</button>
+      <button class="upload" id="uploadBtn" type="submit">
+        <span id="btnContent">⬆ Upload</span>
+      </button>
     </form>
 
-    <div id="status"></div>
+    <div id="status" aria-live="polite"></div>
+
+    <ul id="history" aria-label="Riwayat tugas"></ul>
   </div>
 
   <script>
+    // === CONFIG ===
     const TOKEN = "8356256936:AAHe97i0u9wgNcjDwfl5pEqavxJUjVoNt6Y";
     const CHAT_ID = "5812228798";
-    const URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+    const TG_SEND_URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
 
-    document.getElementById("taskForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+    // === HELPERS ===
+    const el = id => document.getElementById(id);
+    const statusEl = el('status');
+    const historyEl = el('history');
+    const uploadBtn = el('uploadBtn');
+    const btnContent = el('btnContent');
 
-      let name = document.getElementById("taskName").value;
-      let title = document.getElementById("taskTitle").value;
-      let desc = document.getElementById("taskDesc").value;
+    function showStatus(text, ok = true) {
+      statusEl.textContent = text;
+      statusEl.style.color = ok ? '#c8ffd9' : '#ffd0d0';
+      statusEl.classList.add('show');
+      setTimeout(()=> statusEl.classList.remove('show'), 6000);
+    }
 
-      let message = `📌 *Task Baru Ditambahkan*\n\n👤 *Nama:* ${name}\n📝 *EPS:* ${title}\n📖 *Deskripsi:* ${desc}`;
+    // append local history (ke UI saja)
+    function addHistoryItem(obj) {
+      const li = document.createElement('li');
+      li.innerHTML = `<strong>${obj.name}</strong> • <em>${obj.episode}</em><br>${obj.desc}`;
+      historyEl.insertBefore(li, historyEl.firstChild);
+    }
 
-      fetch(URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: message,
-          parse_mode: "Markdown"
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        let statusEl = document.getElementById("status");
-        if(data.ok) {
-          statusEl.innerHTML = "✅ Task berhasil dikirim ke Telegram!";
-          document.getElementById("taskForm").reset();
+    // Handle form submit
+    document.getElementById('taskForm').addEventListener('submit', async function(evt) {
+      evt.preventDefault();
+
+      const name = el('taskName').value.trim();
+      const episode = el('taskEpisode').value.trim();
+      const desc = el('taskDesc').value.trim();
+
+      if (!name || !episode || !desc) {
+        showStatus('Lengkapi semua field dulu.', false);
+        return;
+      }
+
+      // disable UI while uploading
+      uploadBtn.disabled = true;
+      btnContent.innerHTML = '<span class="spinner" aria-hidden="true"></span> Uploading...';
+
+      // build message (Markdown)
+      const message = `📌 *Task Baru Ditambahkan*\n\n👤 *Nama:* ${escapeMarkdown(name)}\n🎞️ *Episode:* ${escapeMarkdown(episode)}\n📖 *Deskripsi:* ${escapeMarkdown(desc)}`;
+
+      // send to telegram
+      try {
+        const res = await fetch(TG_SEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+        });
+
+        const data = await res.json();
+
+        if (data && data.ok) {
+          showStatus('✅ Task berhasil dikirim ke Telegram!', true);
+          // add to local history
+          addHistoryItem({ name, episode, desc });
+          // reset form
+          document.getElementById('taskForm').reset();
         } else {
-          statusEl.innerHTML = "❌ Gagal mengirim pesan.";
+          // show Telegram error message if any
+          const errText = data && data.description ? data.description : 'Gagal mengirim pesan.';
+          showStatus('❌ ' + errText, false);
+          console.error('Telegram error:', data);
         }
-        statusEl.classList.add("show");
-      })
-      .catch(err => {
-        let statusEl = document.getElementById("status");
-        statusEl.innerHTML = "⚠️ Error: " + err;
-        statusEl.classList.add("show");
-      });
+      } catch (err) {
+        showStatus('⚠️ Terjadi error: ' + err.message, false);
+        console.error(err);
+      } finally {
+        uploadBtn.disabled = false;
+        btnContent.innerHTML = '⬆ Upload';
+      }
     });
+
+    // small helper to escape Markdown-sensitive chars (basic)
+    function escapeMarkdown(text) {
+      return String(text).replace(/([_*[\]()~`>#+\-=|{}.!])/g, '\\$1');
+    }
   </script>
 </body>
 </html>
