@@ -1,77 +1,145 @@
-<script>
-  const TOKEN = "8356256936:AAHe97i0u9wgNcjDwfl5pEqavxJUjVoNt6Y";
-  const CHAT_ID = "5812228798";
-  const TG_SEND_URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-
-  const el = id => document.getElementById(id);
-  const statusEl = el('status');
-  const historyEl = el('history');
-  const uploadBtn = el('uploadBtn');
-  const btnContent = el('btnContent');
-
-  function showStatus(text, ok = true) {
-    statusEl.textContent = text;
-    statusEl.style.color = ok ? '#c8ffd9' : '#ffd0d0';
-    statusEl.classList.add('show');
-    setTimeout(()=> statusEl.classList.remove('show'), 6000);
-  }
-
-  function addHistoryItem(obj) {
-    const li = document.createElement('li');
-    li.innerHTML = `<strong>${obj.name}</strong> • <em>${obj.episode}</em><br><b>${obj.title}</b><br>${obj.desc}<br><small>${obj.date}</small>`;
-    historyEl.insertBefore(li, historyEl.firstChild);
-  }
-
-  function getFormattedDate() {
-    const now = new Date();
-    const pad = n => (n < 10 ? '0' + n : n);
-    return `${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  }
-
-  document.getElementById('taskForm').addEventListener('submit', async function(evt) {
-    evt.preventDefault();
-
-    const name = el('taskName').value.trim();
-    const episode = el('taskEpisode').value.trim();
-    const title = el('taskTitle').value.trim();
-    const desc = el('taskDesc').value.trim();
-    const date = getFormattedDate();
-
-    if (!name || !episode || !title || !desc) {
-      showStatus('Lengkapi semua field dulu.', false);
-      return;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work Recap</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
     }
 
-    uploadBtn.disabled = true;
-    btnContent.innerHTML = '<span class="spinner"></span> Uploading...';
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-    const message = `*Recap daily*\n\n👤 *Nama:* ${escapeMarkdown(name)}\n🎞️ *EPS:* ${escapeMarkdown(episode)}\n📑 *Judul:* ${escapeMarkdown(title)}\n📖 *Deskripsi:* ${escapeMarkdown(desc)}\n\n📅 *Tanggal Upload:* ${escapeMarkdown(date)}`;
+    h1 {
+      text-align: center;
+      color: #333;
+    }
 
-    try {
-      const res = await fetch(TG_SEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #0078d7;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #005ea0;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📅 Work Recap</h1>
+
+    <form id="taskForm">
+      <label>Nama</label>
+      <input type="text" id="taskName" required>
+
+      <label>Kategori Task</label>
+      <select id="taskCategory" required>
+        <option value="">-- Pilih Kategori --</option>
+        <option>Mr Baek</option>
+        <option>Development</option>
+        <option>Testing</option>
+        <option>Meeting</option>
+      </select>
+
+      <label>Judul (EPS)</label>
+      <input type="text" id="taskTitle" required>
+
+      <label>Deskripsi</label>
+      <textarea id="taskDesc" required></textarea>
+
+      <button type="submit">Upload</button>
+    </form>
+
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const TOKEN = "8356256936:AAHe97i0u9wgNcjDwfl5pEqavxJUjVoNt6Y";
+    const CHAT_ID = "5812228798";
+    const URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+
+    document.getElementById("taskForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      let name = document.getElementById("taskName").value;
+      let category = document.getElementById("taskCategory").value;
+      let title = document.getElementById("taskTitle").value;
+      let desc = document.getElementById("taskDesc").value;
+
+      // Tambahkan tanggal upload
+      let now = new Date();
+      let tanggal = now.toLocaleString("id-ID", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
       });
 
-      const data = await res.json();
+      let message = `📌 *Task Baru Ditambahkan*\n\n👤 *Nama:* ${name}\n📂 *Kategori:* ${category}\n📝 *Judul:* ${title}\n📖 *Deskripsi:* ${desc}\n\n⏰ *Tanggal Upload:* ${tanggal}`;
 
-      if (data.ok) {
-        showStatus('✅ Task berhasil dikirim ke Telegram!', true);
-        addHistoryItem({ name, episode, title, desc, date });
-        document.getElementById('taskForm').reset();
-      } else {
-        showStatus('❌ ' + (data.description || 'Gagal mengirim pesan.'), false);
-      }
-    } catch (err) {
-      showStatus('⚠️ Error: ' + err.message, false);
-    } finally {
-      uploadBtn.disabled = false;
-      btnContent.innerHTML = '⬆ Upload';
-    }
-  });
-
-  function escapeMarkdown(text) {
-    return String(text).replace(/([_*[\]()~`>#+\-=|{}.!])/g, '\\$1');
-  }
-</script>
+      fetch(URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message,
+          parse_mode: "Markdown"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.ok) {
+          document.getElementById("status").innerHTML = "✅ Task berhasil dikirim ke Telegram!";
+          document.getElementById("taskForm").reset();
+        } else {
+          document.getElementById("status").innerHTML = "❌ Gagal mengirim pesan.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("status").innerHTML = "⚠️ Error: " + err;
+      });
+    });
+  </script>
+</body>
+</html>
