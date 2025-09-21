@@ -193,7 +193,34 @@
       uploadBtn.disabled = true;
       btnContent.innerHTML = '<span class="spinner"></span> Uploading...';
 
-      const message = `*Recap daily*\n\n👤 *Nama :* ${escapeMarkdown(name)}\n🎞️ *Eps :* ${escapeMarkdown(episode)}\n📑 *Judul :* ${escapeMarkdown(title)}\n📖 *Deskripsi :* ${escapeMarkdown(desc)}`;
+      document.getElementById('taskForm').addEventListener('submit', async function(evt) {
+  evt.preventDefault();
+
+  const name = el('taskName').value.trim();
+  const episode = el('taskEpisode').value.trim();
+  const title = el('taskTitle').value.trim();
+  const desc = el('taskDesc').value.trim();
+
+  if (!name || !episode || !title || !desc) {
+    showStatus('Lengkapi semua field dulu.', false);
+    return;
+  }
+
+  // 🔹 Tambahin bagian tanggal di sini
+  const now = new Date();
+  const tanggal = now.toLocaleString("id-ID", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  uploadBtn.disabled = true;
+  btnContent.innerHTML = '<span class="spinner"></span> Uploading...';
+
+  const message = `*Recap daily*\n\n👤 *Nama :* ${escapeMarkdown(name)}\n🎞️ *Eps :* ${escapeMarkdown(episode)}\n📑 *Judul :* ${escapeMarkdown(title)}\n📖 *Deskripsi :* ${escapeMarkdown(desc)}\n🗓️ *Tanggal Upload :* ${escapeMarkdown(tanggal)}`;
 
       try {
         const res = await fetch(TG_SEND_URL, {
