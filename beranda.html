@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Proyek Telegram</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #0078d7;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #005ea0;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📌 Project Management</h1>
+
+    <form id="taskForm">
+      <label>Judul Task</label>
+      <input type="text" id="taskTitle" required>
+
+      <label>Deskripsi</label>
+      <textarea id="taskDesc" required></textarea>
+
+      <button type="submit">Tambah Task</button>
+    </form>
+
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const TOKEN = "8356256936:AAHe97i0u9wgNcjDwfl5pEqavxJUjVoNt6Y";
+    const CHAT_ID = "5812228798";
+    const URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+
+    document.getElementById("taskForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      let title = document.getElementById("taskTitle").value;
+      let desc = document.getElementById("taskDesc").value;
+
+      let message = `📌 *Task Baru Ditambahkan*\n\n*Judul:* ${title}\n*Deskripsi:* ${desc}`;
+
+      fetch(URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message,
+          parse_mode: "Markdown"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.ok) {
+          document.getElementById("status").innerHTML = "✅ Task berhasil dikirim ke Telegram!";
+          document.getElementById("taskForm").reset();
+        } else {
+          document.getElementById("status").innerHTML = "❌ Gagal mengirim pesan.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("status").innerHTML = "⚠️ Error: " + err;
+      });
+    });
+  </script>
+</body>
+</html>
