@@ -1,133 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manajemen Proyek Telegram</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Work Recap</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f7f7f7;
+      background-color: #f4f4f9;
       margin: 0;
       padding: 0;
     }
-
-    .container {
-      max-width: 600px;
-      margin: 40px auto;
-      background: white;
+    header {
+      background: #4a90e2;
+      color: #fff;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
-    h1 {
-      text-align: center;
-      color: #333;
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
+    .container {
+      width: 90%;
+      max-width: 800px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
-    input, textarea, select {
-      width: 100%;
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input, select, button {
       padding: 10px;
-      margin-top: 5px;
+      border-radius: 5px;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      font-size: 14px;
     }
-
     button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      background: #0078d7;
+      background-color: #4a90e2;
+      color: #fff;
       border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 6px;
       cursor: pointer;
     }
-
     button:hover {
-      background: #005ea0;
+      background-color: #357ab8;
     }
-
-    #status {
-      margin-top: 15px;
-      font-size: 14px;
-      text-align: center;
+    .task-list {
+      margin-top: 20px;
+    }
+    .task {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>📅 Work Recap</h1>
+  </header>
   <div class="container">
-    <h1>📌 Project Management</h1>
-
     <form id="taskForm">
-      <label>Nama</label>
-      <input type="text" id="taskName" required>
-
-      <label>Kategori Task</label>
-      <select id="taskCategory" required>
-        <option value="">-- Pilih Kategori --</option>
-        <option>Mr Baek</option>
-        <option>Development</option>
-        <option>Testing</option>
-        <option>Meeting</option>
+      <label for="name">Nama</label>
+      <select id="name" required>
+        <option value="">-- Pilih Nama --</option>
+        <option value="Ageng">Ageng</option>
+        <option value="Citra">Citra</option>
+        <option value="Rifat">Rifat</option>
       </select>
 
-      <label>Judul Task</label>
-      <input type="text" id="taskTitle" required>
+      <label for="taskTitle">Judul</label>
+      <select id="taskTitle" required>
+        <option value="">-- Pilih Judul --</option>
+        <option value="Mr. Baek">Mr. Baek</option>
+        <option value="Killer Reborn">Killer Reborn</option>
+        <option value="Vigilante">Vigilante</option>
+        <option value="Boneless">Boneless</option>
+        <option value="I'm Not That Kind">I'm Not That Kind</option>
+        <option value="My 9900">My 9900</option>
+        <option value="Silent Night">Silent Night</option>
+        <option value="Moonlight Shadow">Moonlight Shadow</option>
+        <option value="Crimson Sky">Crimson Sky</option>
+        <option value="Shadow Hunter">Shadow Hunter</option>
+        <option value="Lost Paradise">Lost Paradise</option>
+        <option value="Golden Hour">Golden Hour</option>
+        <option value="Dark Horizon">Dark Horizon</option>
+        <option value="Fallen Angel">Fallen Angel</option>
+        <option value="The Last Stand">The Last Stand</option>
+        <option value="Iron Will">Iron Will</option>
+        <option value="Whispering Wind">Whispering Wind</option>
+        <option value="Broken Oath">Broken Oath</option>
+        <option value="Blood Moon">Blood Moon</option>
+        <option value="Hidden Truth">Hidden Truth</option>
+        <option value="Dawn Breaker">Dawn Breaker</option>
+        <option value="Silver Blade">Silver Blade</option>
+        <option value="Redemption">Redemption</option>
+        <option value="Silent Tears">Silent Tears</option>
+        <option value="Fatebound">Fatebound</option>
+        <option value="Storm Chaser">Storm Chaser</option>
+        <option value="Black Rose">Black Rose</option>
+        <option value="Phantom Light">Phantom Light</option>
+        <option value="Desert Mirage">Desert Mirage</option>
+        <option value="Eternal Flame">Eternal Flame</option>
+        <option value="Frozen Heart">Frozen Heart</option>
+        <option value="Cursed Crown">Cursed Crown</option>
+        <option value="Unseen Enemy">Unseen Enemy</option>
+        <option value="Iron Blood">Iron Blood</option>
+        <option value="Whisper of Death">Whisper of Death</option>
+        <option value="Shadowed Path">Shadowed Path</option>
+        <option value="Twilight Sonata">Twilight Sonata</option>
+        <option value="Ashes of Time">Ashes of Time</option>
+        <option value="Final Horizon">Final Horizon</option>
+        <option value="Forgotten Memories">Forgotten Memories</option>
+      </select>
 
-      <label>Deskripsi</label>
-      <textarea id="taskDesc" required></textarea>
+      <label for="eps">EPS</label>
+      <input type="text" id="eps" placeholder="Masukkan nomor eps..." required />
 
-      <button type="submit">Tambah Task</button>
+      <label for="fileUpload">Upload File</label>
+      <input type="file" id="fileUpload" required />
+
+      <button type="submit">Upload</button>
     </form>
 
-    <div id="status"></div>
+    <div class="task-list" id="taskList"></div>
   </div>
 
   <script>
-    const TOKEN = "8356256936:AAHe97i0u9wgNcjDwfl5pEqavxJUjVoNt6Y";
-    const CHAT_ID = "5812228798";
-    const URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+    const taskForm = document.getElementById("taskForm");
+    const taskList = document.getElementById("taskList");
 
-    document.getElementById("taskForm").addEventListener("submit", function(e) {
+    taskForm.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      let name = document.getElementById("taskName").value;
-      let category = document.getElementById("taskCategory").value;
-      let title = document.getElementById("taskTitle").value;
-      let desc = document.getElementById("taskDesc").value;
+      const name = document.getElementById("name").value;
+      const title = document.getElementById("taskTitle").value;
+      const eps = document.getElementById("eps").value;
+      const file = document.getElementById("fileUpload").files[0];
 
-      let message = `📌 *Task Baru Ditambahkan*\n\n👤 *Nama:* ${name}\n📂 *Kategori:* ${category}\n📝 *Judul:* ${title}\n📖 *Deskripsi:* ${desc}`;
+      if (name && title && eps && file) {
+        const taskItem = document.createElement("div");
+        taskItem.classList.add("task");
+        taskItem.textContent = `${name} - ${title} EPS ${eps} ✅ ${file.name}`;
+        taskList.appendChild(taskItem);
 
-      fetch(URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: message,
-          parse_mode: "Markdown"
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if(data.ok) {
-          document.getElementById("status").innerHTML = "✅ Task berhasil dikirim ke Telegram!";
-          document.getElementById("taskForm").reset();
-        } else {
-          document.getElementById("status").innerHTML = "❌ Gagal mengirim pesan.";
-        }
-      })
-      .catch(err => {
-        document.getElementById("status").innerHTML = "⚠️ Error: " + err;
-      });
+        taskForm.reset();
+      }
     });
   </script>
 </body>
