@@ -32,7 +32,7 @@
       font-weight: bold;
     }
 
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -68,6 +68,18 @@
     <h1>📌 Project Management</h1>
 
     <form id="taskForm">
+      <label>Nama</label>
+      <input type="text" id="taskName" required>
+
+      <label>Kategori Task</label>
+      <select id="taskCategory" required>
+        <option value="">-- Pilih Kategori --</option>
+        <option>Design</option>
+        <option>Development</option>
+        <option>Testing</option>
+        <option>Meeting</option>
+      </select>
+
       <label>Judul Task</label>
       <input type="text" id="taskTitle" required>
 
@@ -88,10 +100,12 @@
     document.getElementById("taskForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
+      let name = document.getElementById("taskName").value;
+      let category = document.getElementById("taskCategory").value;
       let title = document.getElementById("taskTitle").value;
       let desc = document.getElementById("taskDesc").value;
 
-      let message = `📌 *Task Baru Ditambahkan*\n\n*Judul:* ${title}\n*Deskripsi:* ${desc}`;
+      let message = `📌 *Task Baru Ditambahkan*\n\n👤 *Nama:* ${name}\n📂 *Kategori:* ${category}\n📝 *Judul:* ${title}\n📖 *Deskripsi:* ${desc}`;
 
       fetch(URL, {
         method: "POST",
