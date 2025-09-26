@@ -1,161 +1,241 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Work Recap</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manajemen Proyek Telegram</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
+      font-family: "SF Pro Display", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #4a90e2;
-      color: #fff;
-      padding: 20px;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .container {
-      width: 90%;
-      max-width: 800px;
-      margin: 20px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    input, select, button {
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-    button {
-      background-color: #4a90e2;
+      background: linear-gradient(-45deg, #0b0b0b, #2a2a2a, #5a5a5a, #bfbfbf);
+      background-size: 400% 400%;
+      animation: gradientMove 10s ease infinite;
       color: #fff;
+      padding: 24px;
+    }
+    @keyframes gradientMove {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    h1 {
+      margin: 0 0 14px 0;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    label {
+      display:block;
+      margin-top: 12px;
+      margin-bottom:6px;
+      font-weight:600;
+      font-size:13px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    select, input[type="text"], textarea {
+      width:100%;
+      padding:12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.06);
+      background: #ffffff;
+      color: #000000;
+      font-size: 15px;
+      outline: none;
+      box-sizing: border-box;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    input:focus, textarea:focus, select:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .task-block {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    button.upload {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
       border: none;
       cursor: pointer;
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(235,235,235,0.95));
+      color: #111;
+      font-weight: 700;
+      font-size: 15px;
+      transition: transform .12s ease, opacity .12s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
-    button:hover {
-      background-color: #357ab8;
+    button.upload:active { transform: scale(.997); }
+    button.upload[disabled] { opacity: .6; cursor: not-allowed; }
+
+    #status {
+      margin-top: 14px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      transform: translateY(6px);
     }
-    .task-list {
-      margin-top: 20px;
+    #status.show { opacity: 1; transform: translateY(0); }
+
+    .spinner {
+      width:16px; height:16px; border-radius:50%;
+      border:2px solid rgba(0,0,0,0.12);
+      border-top-color: rgba(0,0,0,0.6); animation: spin .8s linear infinite;
     }
-    .task {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <header>
-    <h1>📅 Work Recap</h1>
-  </header>
   <div class="container">
-    <form id="taskForm">
-      <label for="name">Nama</label>
-      <select id="name" required>
+    <h1>Work Recap</h1>
+
+    <form id="taskForm" autocomplete="off">
+      <label for="taskName">Nama</label>
+      <select id="taskName" required>
         <option value="">-- Pilih Nama --</option>
         <option value="Ageng">Ageng</option>
         <option value="Citra">Citra</option>
         <option value="Rifat">Rifat</option>
       </select>
 
-      <label for="taskTitle">Judul</label>
-      <select id="taskTitle" required>
-        <option value="">-- Pilih Judul --</option>
-        <option value="Mr. Baek">Mr. Baek</option>
-        <option value="Killer Reborn">Killer Reborn</option>
-        <option value="Vigilante">Vigilante</option>
-        <option value="Boneless">Boneless</option>
-        <option value="I'm Not That Kind">I'm Not That Kind</option>
-        <option value="My 9900">My 9900</option>
-        <option value="Silent Night">Silent Night</option>
-        <option value="Moonlight Shadow">Moonlight Shadow</option>
-        <option value="Crimson Sky">Crimson Sky</option>
-        <option value="Shadow Hunter">Shadow Hunter</option>
-        <option value="Lost Paradise">Lost Paradise</option>
-        <option value="Golden Hour">Golden Hour</option>
-        <option value="Dark Horizon">Dark Horizon</option>
-        <option value="Fallen Angel">Fallen Angel</option>
-        <option value="The Last Stand">The Last Stand</option>
-        <option value="Iron Will">Iron Will</option>
-        <option value="Whispering Wind">Whispering Wind</option>
-        <option value="Broken Oath">Broken Oath</option>
-        <option value="Blood Moon">Blood Moon</option>
-        <option value="Hidden Truth">Hidden Truth</option>
-        <option value="Dawn Breaker">Dawn Breaker</option>
-        <option value="Silver Blade">Silver Blade</option>
-        <option value="Redemption">Redemption</option>
-        <option value="Silent Tears">Silent Tears</option>
-        <option value="Fatebound">Fatebound</option>
-        <option value="Storm Chaser">Storm Chaser</option>
-        <option value="Black Rose">Black Rose</option>
-        <option value="Phantom Light">Phantom Light</option>
-        <option value="Desert Mirage">Desert Mirage</option>
-        <option value="Eternal Flame">Eternal Flame</option>
-        <option value="Frozen Heart">Frozen Heart</option>
-        <option value="Cursed Crown">Cursed Crown</option>
-        <option value="Unseen Enemy">Unseen Enemy</option>
-        <option value="Iron Blood">Iron Blood</option>
-        <option value="Whisper of Death">Whisper of Death</option>
-        <option value="Shadowed Path">Shadowed Path</option>
-        <option value="Twilight Sonata">Twilight Sonata</option>
-        <option value="Ashes of Time">Ashes of Time</option>
-        <option value="Final Horizon">Final Horizon</option>
-        <option value="Forgotten Memories">Forgotten Memories</option>
-      </select>
+      <!-- Task 1 - 5 -->
+      <div id="tasks">
+        ${[1,2,3,4,5].map(i => `
+          <div class="task-block">
+            <label>Task ${i} - Judul</label>
+            <input type="text" id="taskTitle${i}" placeholder="Judul Task ${i}" />
 
-      <label for="eps">EPS</label>
-      <input type="text" id="eps" placeholder="Masukkan nomor eps..." required />
+            <label>Task ${i} - Eps</label>
+            <input type="text" id="taskEpisode${i}" placeholder="EPS Task ${i}" />
+          </div>
+        `).join("")}
+      </div>
 
-      <label for="fileUpload">Upload File</label>
-      <input type="file" id="fileUpload" required />
+      <label for="taskDesc">Deskripsi</label>
+      <textarea id="taskDesc" placeholder="Tulis detail tugas di sini..."></textarea>
 
-      <button type="submit">Upload</button>
+      <button class="upload" id="uploadBtn" type="submit">
+        <span id="btnContent">⬆ Upload</span>
+      </button>
     </form>
 
-    <div class="task-list" id="taskList"></div>
+    <div id="status"></div>
   </div>
 
-  <script>
-    const taskForm = document.getElementById("taskForm");
-    const taskList = document.getElementById("taskList");
+<script>
+  // Ganti token & chat ID sesuai botmu
+  const TOKEN = "ISI_TOKEN_MU";
+  const CHAT_ID = "ISI_CHAT_ID";
+  const TG_SEND_URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
 
-    taskForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+  const el = id => document.getElementById(id);
+  const statusEl = el('status');
+  const uploadBtn = el('uploadBtn');
+  const btnContent = el('btnContent');
 
-      const name = document.getElementById("name").value;
-      const title = document.getElementById("taskTitle").value;
-      const eps = document.getElementById("eps").value;
-      const file = document.getElementById("fileUpload").files[0];
+  function showStatus(text, ok = true) {
+    statusEl.textContent = text;
+    statusEl.style.color = ok ? '#c8ffd9' : '#ffd0d0';
+    statusEl.classList.add('show');
+    setTimeout(()=> statusEl.classList.remove('show'), 6000);
+  }
 
-      if (name && title && eps && file) {
-        const taskItem = document.createElement("div");
-        taskItem.classList.add("task");
-        taskItem.textContent = `${name} - ${title} EPS ${eps} ✅ ${file.name}`;
-        taskList.appendChild(taskItem);
+  document.getElementById('taskForm').addEventListener('submit', async function(evt) {
+    evt.preventDefault();
 
-        taskForm.reset();
+    const name = el('taskName').value.trim();
+    const desc = el('taskDesc').value.trim();
+    if (!name) {
+      showStatus('Nama wajib diisi.', false);
+      return;
+    }
+
+    // Ambil semua task
+    let tasks = [];
+    for (let i=1; i<=5; i++) {
+      const title = el('taskTitle'+i).value.trim();
+      const episode = el('taskEpisode'+i).value.trim();
+      if (title || episode) {
+        tasks.push(`*Task ${i}*\n- Judul : ${escapeMarkdown(title)}\n- Eps   : ${escapeMarkdown(episode)}`);
       }
+    }
+
+    const now = new Date();
+    const tanggal = now.toLocaleString("id-ID", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
     });
-  </script>
+
+    uploadBtn.disabled = true;
+    btnContent.innerHTML = '<span class="spinner"></span> Uploading...';
+
+    let message = `*Recap daily*\n\n👤 *Nama :* ${escapeMarkdown(name)}\n\n`;
+    message += tasks.join("\n\n");
+    message += `\n\n📖 *Deskripsi :* ${escapeMarkdown(desc)}\n🗓️ *Tanggal Upload :* ${escapeMarkdown(tanggal)}`;
+
+    try {
+      const res = await fetch(TG_SEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        showStatus('✅ Task berhasil dikirim ke Telegram!', true);
+        document.getElementById('taskForm').reset();
+      } else {
+        showStatus('❌ ' + (data.description || 'Gagal mengirim pesan.'), false);
+      }
+    } catch (err) {
+      showStatus('⚠️ Error: ' + err.message, false);
+    } finally {
+      uploadBtn.disabled = false;
+      btnContent.innerHTML = '⬆ Upload';
+    }
+  });
+
+  function escapeMarkdown(text) {
+    return String(text||'').replace(/([_*[\]()~`>#+\-=|{}.!])/g, '\\$1');
+  }
+</script>
 </body>
 </html>
