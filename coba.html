@@ -26,7 +26,7 @@
 
     .container {
       width: 100%;
-      max-width: 560px;
+      max-width: 600px;
       background: rgba(255,255,255,0.06);
       backdrop-filter: blur(12px);
       border-radius: 18px;
@@ -50,7 +50,7 @@
       color: rgba(255,255,255,0.9);
     }
 
-    select, input[type="text"], textarea, input[type="file"] {
+    select, input[type="text"], textarea {
       width:100%;
       padding:12px 14px;
       border-radius: 12px;
@@ -72,8 +72,42 @@
       resize: vertical;
     }
 
-    button.upload {
+    .task-block {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: crimson;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .add-task {
       margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: #f1f1f1;
+      color: #111;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    button.upload {
+      margin-top: 18px;
       width: 100%;
       padding: 12px 16px;
       border-radius: 12px;
@@ -103,17 +137,6 @@
     }
     #status.show { opacity: 1; transform: translateY(0); }
 
-    #history { margin-top:16px; list-style:none; padding:0; max-height:220px; overflow:auto; }
-    #history li {
-      background: rgba(255,255,255,0.9);
-      color: #000;
-      padding:10px 12px;
-      margin-bottom:8px;
-      border-radius:10px;
-      font-size:13px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    }
-
     .spinner {
       width:16px; height:16px; border-radius:50%;
       border:2px solid rgba(0,0,0,0.12);
@@ -126,14 +149,6 @@
   <div class="container">
     <h1>Work Recap</h1>
 
-    <!-- Upload File Langsung -->
-    <label for="taskFile">Upload File ke Telegram</label>
-    <input type="file" id="taskFile" />
-    <button class="upload" id="uploadFileBtn" type="button">📂 Upload File</button>
-
-    <hr style="margin:18px 0; opacity:.3;">
-
-    <!-- Form Recap -->
     <form id="taskForm" autocomplete="off">
       <label for="taskName">Nama</label>
       <select id="taskName" required>
@@ -143,14 +158,11 @@
         <option value="Rifat">Rifat</option>
       </select>
 
-      <label for="taskEpisode">EPS</label>
-      <input type="text" id="taskEpisode" placeholder="Contoh: EPS 12" required />
-
-      <label for="taskTitle">Judul</label>
-      <input type="text" id="taskTitle" placeholder="Masukkan judul..." required />
+      <div id="tasks"></div>
+      <button type="button" class="add-task" id="addTaskBtn">+ Add Task</button>
 
       <label for="taskDesc">Deskripsi</label>
-      <textarea id="taskDesc" placeholder="Tulis detail tugas di sini..." required></textarea>
+      <textarea id="taskDesc" placeholder="Tulis detail di sini..."></textarea>
 
       <button class="upload" id="uploadBtn" type="submit">
         <span id="btnContent">⬆ Upload</span>
@@ -158,21 +170,80 @@
     </form>
 
     <div id="status"></div>
-    <ul id="history"></ul>
   </div>
 
-  <script>
+<script>
   const TOKEN = "8356256936:AAHe97i0u9wgNcjDwfl5pEqavxJUjVoNt6Y";
   const CHAT_ID = "5812228798";
   const TG_SEND_URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-  const TG_FILE_URL = `https://api.telegram.org/bot${TOKEN}/sendDocument`;
 
   const el = id => document.getElementById(id);
+  const tasksContainer = el('tasks');
+  const addTaskBtn = el('addTaskBtn');
   const statusEl = el('status');
-  const historyEl = el('history');
   const uploadBtn = el('uploadBtn');
   const btnContent = el('btnContent');
-  const uploadFileBtn = el('uploadFileBtn');
+
+  let taskCount = 0;
+
+  function createTaskBlock() {
+    taskCount++;
+    const div = document.createElement('div');
+    div.className = 'task-block';
+
+    div.innerHTML = `
+      <button type="button" class="remove-btn">✕</button>
+      <label>Task ${taskCount} - Judul</label>
+      <select name="title">
+        <option value="">-- Pilih Judul --</option>
+        <option>Finding a Ticket Into Your Heart</option>
+        <option>I'm Not That Kind of Talent</option>
+        <option>I Was the Final Boss</option>
+        <option>Level 999 Goblin</option>
+        <option>Trapped in a Soap Opera</option>
+        <option>The Knight Becomes a Black Flower</option>
+        <option>Situationship</option>
+        <option>Ranker's Return</option>
+        <option>Hiding Out in an Apocalypse</option>
+        <option>Hi, Mommy!</option>
+        <option>Cry, or Better Yet, Beg</option>
+        <option>Boundless Ascension</option>
+        <option>Absolute Reign</option>
+        <option>My Beloved Oppressor</option>
+        <option>Ghost Dating Simulation</option>
+        <option>Mr. Baek</option>
+        <option>Mask Girl</option>
+        <option>King of the Arena</option>
+        <option>Killer Reborn</option>
+        <option>Judul baru</option>
+        <option>All For My Dearest Juliet</option>
+        <option>The Baek Clan's Sickly Young Master</option>
+        <option>Strangers, Daughters</option>
+        <option>Catching Up to Luke Bischel</option>
+        <option>My villanious Family Won't Let Me Be</option>
+        <option>The Reborn Young Lord is an Assassin</option>
+        <option>Thank You for Your Betrayal</option>
+        <option>Myst, Might, Mayhem</option>
+        <option>I Didn’t Sign Up to be a Nanny!</option>
+        <option>My Comeback as the Youngest Member</option>
+        <option>Mother's Contract Marriage</option>
+        <option>The Office Worker Who Sees Destiny</option>
+        <option>Kill the Dragon</option>
+        <option>I Don't Trust My Twin</option>
+        <option>Friend req</option>
+        <option>The Otherworldly Genius Method Actor</option>
+        <option>He's Just My Brother, Your Grace!</option>
+      </select>
+
+      <label>Task ${taskCount} - Eps</label>
+      <input type="text" name="eps" placeholder="EPS Task ${taskCount}">
+    `;
+
+    div.querySelector('.remove-btn').onclick = () => div.remove();
+    tasksContainer.appendChild(div);
+  }
+
+  addTaskBtn.addEventListener('click', createTaskBlock);
 
   function showStatus(text, ok = true) {
     statusEl.textContent = text;
@@ -181,61 +252,26 @@
     setTimeout(()=> statusEl.classList.remove('show'), 6000);
   }
 
-  function addHistoryItem(obj) {
-    const li = document.createElement('li');
-    li.innerHTML = `<strong>${obj.name}</strong> • <em>${obj.episode}</em><br><b>${obj.title}</b><br>${obj.desc}<br><small>${obj.tanggal}</small>`;
-    historyEl.insertBefore(li, historyEl.firstChild);
-  }
-
-  // 🔹 Upload File Langsung
-  uploadFileBtn.addEventListener('click', async () => {
-    const fileInput = el('taskFile');
-    const file = fileInput.files[0];
-    if (!file) {
-      showStatus("Pilih file dulu!", false);
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("chat_id", CHAT_ID);
-    formData.append("document", file);
-
-    uploadFileBtn.disabled = true;
-    uploadFileBtn.innerHTML = '<span class="spinner"></span> Uploading...';
-
-    try {
-      const res = await fetch(TG_FILE_URL, { method: "POST", body: formData });
-      const data = await res.json();
-
-      if (data.ok) {
-        showStatus("✅ File berhasil diupload ke Telegram!", true);
-        fileInput.value = "";
-      } else {
-        showStatus("❌ " + (data.description || "Gagal upload file."), false);
-      }
-    } catch (err) {
-      showStatus("⚠️ Error: " + err.message, false);
-    } finally {
-      uploadFileBtn.disabled = false;
-      uploadFileBtn.innerHTML = "📂 Upload File";
-    }
-  });
-
-  // 🔹 Upload Data Form
   document.getElementById('taskForm').addEventListener('submit', async function(evt) {
     evt.preventDefault();
 
     const name = el('taskName').value.trim();
-    const episode = el('taskEpisode').value.trim();
-    const title = el('taskTitle').value.trim();
     const desc = el('taskDesc').value.trim();
-
-    if (!name || !episode || !title || !desc) {
-      showStatus('Lengkapi semua field dulu.', false);
+    if (!name) {
+      showStatus('Nama wajib diisi.', false);
       return;
     }
 
-    // tanggal
+    let tasks = [];
+    const taskBlocks = tasksContainer.querySelectorAll('.task-block');
+    taskBlocks.forEach((block, idx) => {
+      const title = block.querySelector('select[name="title"]').value.trim();
+      const eps = block.querySelector('input[name="eps"]').value.trim();
+      if (title || eps) {
+        tasks.push(`*Task ${idx+1}*\n- Judul : ${escapeMarkdown(title)}\n- Eps   : ${escapeMarkdown(eps)}`);
+      }
+    });
+
     const now = new Date();
     const tanggal = now.toLocaleString("id-ID", {
       weekday: "long",
@@ -249,7 +285,9 @@
     uploadBtn.disabled = true;
     btnContent.innerHTML = '<span class="spinner"></span> Uploading...';
 
-    const message = `*Recap daily*\n\n👤 *Nama :* ${escapeMarkdown(name)}\n🎞️ *Eps :* ${escapeMarkdown(episode)}\n📑 *Judul :* ${escapeMarkdown(title)}\n📖 *Deskripsi :* ${escapeMarkdown(desc)}\n🗓️ *Tanggal Upload :* ${escapeMarkdown(tanggal)}`;
+    let message = `*Recap daily*\n\n👤 *Nama :* ${escapeMarkdown(name)}\n\n`;
+    message += tasks.join("\n\n") || "_(tidak ada task)_";
+    message += `\n\n📖 *Deskripsi :* ${escapeMarkdown(desc)}\n🗓️ *Tanggal Update :* ${escapeMarkdown(tanggal)}`;
 
     try {
       const res = await fetch(TG_SEND_URL, {
@@ -259,11 +297,11 @@
       });
 
       const data = await res.json();
-
       if (data.ok) {
-        showStatus('✅ Task berhasil dikirim ke Telegram!', true);
-        addHistoryItem({ name, episode, title, desc, tanggal });
+        showStatus('✅ Task berhasil di Update, Terimakasih kerja kerasnya!', true);
         document.getElementById('taskForm').reset();
+        tasksContainer.innerHTML = "";
+        taskCount = 0;
       } else {
         showStatus('❌ ' + (data.description || 'Gagal mengirim pesan.'), false);
       }
@@ -276,7 +314,7 @@
   });
 
   function escapeMarkdown(text) {
-    return String(text).replace(/([_*[\]()~`>#+\-=|{}.!])/g, '\\$1');
+    return String(text||'').replace(/([_*[\]()~`>#+\-=|{}.!])/g, '\\$1');
   }
 </script>
 </body>
