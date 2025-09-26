@@ -74,10 +74,36 @@
 
     .task-block {
       margin-top: 12px;
-      padding: 10px;
+      padding: 12px;
       border-radius: 12px;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: crimson;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .add-task {
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: #f1f1f1;
+      color: #111;
+      font-weight: 600;
+      font-size: 14px;
     }
 
     button.upload {
@@ -132,18 +158,8 @@
         <option value="Rifat">Rifat</option>
       </select>
 
-      <!-- Task 1 - 5 -->
-      <div id="tasks">
-        ${[1,2,3,4,5].map(i => `
-          <div class="task-block">
-            <label>Task ${i} - Judul</label>
-            <input type="text" id="taskTitle${i}" placeholder="Judul Task ${i}" />
-
-            <label>Task ${i} - Eps</label>
-            <input type="text" id="taskEpisode${i}" placeholder="EPS Task ${i}" />
-          </div>
-        `).join("")}
-      </div>
+      <div id="tasks"></div>
+      <button type="button" class="add-task" id="addTaskBtn">+ Add Task</button>
 
       <label for="taskDesc">Deskripsi</label>
       <textarea id="taskDesc" placeholder="Tulis detail tugas di sini..."></textarea>
@@ -163,9 +179,30 @@
   const TG_SEND_URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
 
   const el = id => document.getElementById(id);
+  const tasksContainer = el('tasks');
+  const addTaskBtn = el('addTaskBtn');
   const statusEl = el('status');
   const uploadBtn = el('uploadBtn');
   const btnContent = el('btnContent');
+
+  let taskCount = 0;
+
+  function createTaskBlock() {
+    taskCount++;
+    const div = document.createElement('div');
+    div.className = 'task-block';
+    div.innerHTML = `
+      <button type="button" class="remove-btn">✕</button>
+      <label>Task ${taskCount} - Judul</label>
+      <input type="text" name="title" placeholder="Judul Task ${taskCount}">
+      <label>Task ${taskCount} - Eps</label>
+      <input type="text" name="eps" placeholder="EPS Task ${taskCount}">
+    `;
+    div.querySelector('.remove-btn').onclick = () => div.remove();
+    tasksContainer.appendChild(div);
+  }
+
+  addTaskBtn.addEventListener('click', createTaskBlock);
 
   function showStatus(text, ok = true) {
     statusEl.textContent = text;
@@ -184,15 +221,15 @@
       return;
     }
 
-    // Ambil semua task
     let tasks = [];
-    for (let i=1; i<=5; i++) {
-      const title = el('taskTitle'+i).value.trim();
-      const episode = el('taskEpisode'+i).value.trim();
-      if (title || episode) {
-        tasks.push(`*Task ${i}*\n- Judul : ${escapeMarkdown(title)}\n- Eps   : ${escapeMarkdown(episode)}`);
+    const taskBlocks = tasksContainer.querySelectorAll('.task-block');
+    taskBlocks.forEach((block, idx) => {
+      const title = block.querySelector('input[name="title"]').value.trim();
+      const eps = block.querySelector('input[name="eps"]').value.trim();
+      if (title || eps) {
+        tasks.push(`*Task ${idx+1}*\n- Judul : ${escapeMarkdown(title)}\n- Eps   : ${escapeMarkdown(eps)}`);
       }
-    }
+    });
 
     const now = new Date();
     const tanggal = now.toLocaleString("id-ID", {
@@ -208,7 +245,7 @@
     btnContent.innerHTML = '<span class="spinner"></span> Uploading...';
 
     let message = `*Recap daily*\n\n👤 *Nama :* ${escapeMarkdown(name)}\n\n`;
-    message += tasks.join("\n\n");
+    message += tasks.join("\n\n") || "_(tidak ada task)_";
     message += `\n\n📖 *Deskripsi :* ${escapeMarkdown(desc)}\n🗓️ *Tanggal Upload :* ${escapeMarkdown(tanggal)}`;
 
     try {
@@ -222,6 +259,8 @@
       if (data.ok) {
         showStatus('✅ Task berhasil dikirim ke Telegram!', true);
         document.getElementById('taskForm').reset();
+        tasksContainer.innerHTML = "";
+        taskCount = 0;
       } else {
         showStatus('❌ ' + (data.description || 'Gagal mengirim pesan.'), false);
       }
