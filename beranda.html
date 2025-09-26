@@ -162,7 +162,7 @@
       <button type="button" class="add-task" id="addTaskBtn">+ Add Task</button>
 
       <label for="taskDesc">Deskripsi</label>
-      <textarea id="taskDesc" placeholder="Tulis detail tugas di sini..."></textarea>
+      <textarea id="taskDesc" placeholder="Tulis detail di sini..."></textarea>
 
       <button class="upload" id="uploadBtn" type="submit">
         <span id="btnContent">⬆ Upload</span>
@@ -246,7 +246,7 @@
 
     let message = `*Recap daily*\n\n👤 *Nama :* ${escapeMarkdown(name)}\n\n`;
     message += tasks.join("\n\n") || "_(tidak ada task)_";
-    message += `\n\n📖 *Deskripsi :* ${escapeMarkdown(desc)}\n🗓️ *Tanggal Upload :* ${escapeMarkdown(tanggal)}`;
+    message += `\n\n📖 *Deskripsi :* ${escapeMarkdown(desc)}\n🗓️ *Tanggal Update :* ${escapeMarkdown(tanggal)}`;
 
     try {
       const res = await fetch(TG_SEND_URL, {
@@ -257,7 +257,7 @@
 
       const data = await res.json();
       if (data.ok) {
-        showStatus('✅ Task berhasil dikirim ke Telegram!', true);
+        showStatus('✅ Task berhasil di Update, Terimakasih kerja kerasnya!', true);
         document.getElementById('taskForm').reset();
         tasksContainer.innerHTML = "";
         taskCount = 0;
